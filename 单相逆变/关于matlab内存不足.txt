@@ -1,0 +1,6 @@
+windows 7系统：
+
+ 　 1.进入命令行： 点击开始菜单 -> 在搜索框中输入 "cmd"，按下 ctrl + shift + 回车(命令行的*员模式)
+　  2.在cmd中输入: bcdedit /set pae forceenable 这里的bceddit是关于命令行的启动配置编辑器
+    3.输入命令：bcdedit /set increaseuserva 3072 回车
+    4.重启系统.
