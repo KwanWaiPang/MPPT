@@ -3,5 +3,6 @@
 #define RTW_HEADER_single_phase_PVarry_inverter_acc_types_h_
 #include "rtwtypes.h"
 #include "multiword_types.h"
-typedef struct loikxjbxjg_ loikxjbxjg ;
+typedef struct P_single_phase_PVarry_inverter_T_
+P_single_phase_PVarry_inverter_T ;
 #endif

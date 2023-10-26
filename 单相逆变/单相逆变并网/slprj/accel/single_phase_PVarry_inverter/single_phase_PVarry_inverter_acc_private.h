@@ -3,6 +3,7 @@
 #define RTW_HEADER_single_phase_PVarry_inverter_acc_private_h_
 #include "rtwtypes.h"
 #include "multiword_types.h"
+#include "single_phase_PVarry_inverter_acc.h"
 #if !defined(ss_VALIDATE_MEMORY)
 #define ss_VALIDATE_MEMORY(S, ptr)   if(!(ptr)) {\
   ssSetErrorStatus(S, RT_MEMORY_ALLOCATION_ERROR);\
@@ -21,9 +22,6 @@
   }
 #endif
 #endif
-#ifndef __RTWTYPES_H__
-#error This file requires rtwtypes.h to be included
-#endif
 #ifndef __RTW_UTFREE__
 extern void * utMalloc ( size_t ) ; extern void utFree ( void * ) ;
 #endif
@@ -37,5 +35,11 @@ real_T tStart , real_T * tBuf , real_T * uBuf , int_T bufSz , int_T * lastIdx
 , int_T oldestIdx , int_T newIdx , real_T initOutput , boolean_T discrete ,
 boolean_T minorStepAndTAtLastMajorOutput ) ; extern real_T look1_binlxpw (
 real_T u0 , const real_T bp0 [ ] , const real_T table [ ] , uint32_T maxIndex
-) ;
+) ; void
+single_phase_PVarry_inverter_Synthesized_Atomic_Subsystem_For_Alg_Loop_1_Init
+( SimStruct * S ) ; void
+single_phase_PVarry_inverter_Synthesized_Atomic_Subsystem_For_Alg_Loop_1_Update
+( SimStruct * S ) ; void
+single_phase_PVarry_inverter_Synthesized_Atomic_Subsystem_For_Alg_Loop_1 (
+SimStruct * S ) ;
 #endif

@@ -1,3 +1,0 @@
-#ifndef CF_PV_Single_Phase_inverter_H__
-#define CF_PV_Single_Phase_inverter_H__
-#endif

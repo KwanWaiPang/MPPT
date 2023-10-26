@@ -1,35 +1,33 @@
-# Copyright 1994-2010 The MathWorks, Inc.
+# Copyright 1994-2018 The MathWorks, Inc.
 #
-# File    : accel_lcc.tmf   
+# File    : ert_lcc64.tmf   
 #
 # Abstract:
-#	Accelerator template makefile for building a PC-based,
-#       generated mex-file of Simulink model using generated C code. 
-#	     LCC compiler version 2.4.
+#       Template makefile for building a PC-based stand-alone embedded real-time 
+#       version of Simulink model using generated C code and 
+#			LCC compiler Version 2.4
 #
-# 	This makefile attempts to conform to the guidelines specified in the
-# 	IEEE Std 1003.2-1992 (POSIX) standard. It is designed to be used
-#       with GNU Make (gmake) which is located in matlabroot/bin/win32.
+#       This makefile attempts to conform to the guidelines specified in the
+#       IEEE Std 1003.2-1992 (POSIX) standard. It is designed to be used
+#       with GNU Make (gmake) which is located in matlabroot/bin/win64.
 #
-# 	Note that this template is automatically customized by the Real-Time
-#	Workshop build procedure to create "<model>.mk"
+#       Note that this template is automatically customized by the build 
+#       procedure to create "<model>.mk"
 #
 #       The following defines can be used to modify the behavior of the
-#	build:
-#
-#         MEX_OPTS       - User specific mex options.
-#	  OPT_OPTS       - Optimization options. Default is none. To enable 
-#                          debugging specify as OPT_OPTS=-g. 
-#	  USER_SRCS      - Additional user sources, such as files needed by
-#			   S-functions.
-#	  USER_INCLUDES  - Additional include paths
-#			   (i.e. USER_INCLUDES="-Iwhere-ever -Iwhere-ever2")
-#			   (For Lcc, have a '/'as file seperator before the 
-#			   file name instead of a '\' . 
-#			   i.e.,  d:\work\proj1/myfile.c - reqd for 'gmake')
-#
+#       build:
+#         OPT_OPTS       - Optimization options. Default is none. To enable 
+#                          debugging specify as OPT_OPTS=-g4. 
+#         OPTS           - User specific compile options.
+#         USER_SRCS      - Additional user sources, such as files needed by
+#                          S-functions.
+#         USER_INCLUDES  - Additional include paths 
+#                          (i.e. USER_INCLUDES="-Iwhere-ever -Iwhere-ever2")
+#                          (For Lcc, have a '/'as file seperator before the 
+#                          file name instead of a '\' . 
+#                          i.e.,  d:\work\proj1/myfile.c - reqd for 'gmake')
 #       This template makefile is designed to be used with a system target
-#       file that contains 'rtwgensettings.BuildDirSuffix' see accel.tlc
+#       file that contains 'rtwgensettings.BuildDirSuffix' see ert.tlc
 
 #------------------------ Macros read by make_rtw ------------------------------
 #
@@ -41,12 +39,14 @@
 #  BUILD           - Invoke make from the build procedure (yes/no)?
 #  SYS_TARGET_FILE - Name of system target file.
 
-MAKECMD         = "%MATLAB%\bin\win32\gmake"
+MAKECMD         = "%MATLAB%\bin\win64\gmake"
 SHELL           = cmd
 HOST            = PC
 BUILD           = yes
-SYS_TARGET_FILE = accel.tlc
-COMPILER_TOOL_CHAIN = lcc
+SYS_TARGET_FILE = any
+
+# Opt in to simplified format by specifying compatible Toolchain
+TOOLCHAIN_NAME = "LCC-win64 v2.4.1 | gmake (64-bit Windows)"
 
 MAKEFILE_FILESEP = /
 
@@ -55,56 +55,74 @@ MAKEFILE_FILESEP = /
 # The following tokens, when wrapped with "|>" and "<|" are expanded by the
 # build procedure.
 #
-#  MODEL_NAME      - Name of the Simulink block diagram
-#  MODEL_MODULES   - Any additional generated source modules
-#  MAKEFILE_NAME   - Name of makefile created from template makefile <model>.mk
-#  MATLAB_ROOT     - Path to where MATLAB is installed.
-#  MATLAB_BIN      - Path to MATLAB executable.
-#  S_FUNCTIONS     - List of S-functions.
-#  S_FUNCTIONS_LIB - List of S-functions libraries to link.
-#  SOLVER          - Solver source file name
-#  NUMST           - Number of sample times
-#  TID01EQ         - yes (1) or no (0): Are sampling rates of continuous task
-#                    (tid=0) and 1st discrete task equal.
-#  NCSTATES        - Number of continuous states
-#  BUILDARGS       - Options passed in at the command line.
-#  MEXEXT          - extension that a mex file has. See the MATLAB mexext 
-#                    command
+#  MODEL_NAME          - Name of the Simulink block diagram
+#  MODEL_MODULES       - Any additional generated source modules
+#  MAKEFILE_NAME       - Name of makefile created from template makefile <model>.mk
+#  MATLAB_ROOT         - Path to where MATLAB is installed.
+#  MATLAB_BIN          - Path to MATLAB executable.
+#  S_FUNCTIONS_LIB     - List of S-functions libraries to link. 
+#  NUMST               - Number of sample times
+#  NCSTATES            - Number of continuous states
+#  BUILDARGS           - Options passed in at the command line.
+#  MULTITASKING        - yes (1) or no (0): Is solver mode multitasking
+#  INTEGER_CODE        - yes (1) or no (0): Is generated code purely integer
+#  MAT_FILE            - yes (1) or no (0): Should mat file logging be done,
+#                        if 0, the generated code runs indefinitely
+#  MULTI_INSTANCE_CODE - Is the generated code multi instantiable (1/0)?
+#  SHRLIBTARGET        - Is this build intended for generation of a shared library instead 
+#                        of executable (1/0)?
+#  MAKEFILEBUILDER_TGT - Is this build performed by the MakefileBuilder class
+#                        e.g. to create a PIL executable?
+#  STANDALONE_SUPPRESS_EXE - Build the standalone target but only create object code modules 
+#                            and do not build an executable
 
-MODEL              = single_phase_PVarry_inverter
-MODULES            = rtGetInf.c rtGetNaN.c rt_nonfinite.c single_phase_PVarry_inverter_acc_data.c 
-MAKEFILE           = single_phase_PVarry_inverter.mk
-MATLAB_ROOT        = D:/Program Files/MATLAB/R2014a
-ALT_MATLAB_ROOT    = D:/PROGRA~1/MATLAB/R2014a
-MASTER_ANCHOR_DIR  = 
-START_DIR          = E:/MotorCtr_FOCv0.1.0/model/单相整流+单相逆变并网
-MATLAB_BIN         = D:/Program Files/MATLAB/R2014a/bin
-ALT_MATLAB_BIN     = D:/PROGRA~1/MATLAB/R2014a/bin
-S_FUNCTIONS        = sfun_PV_array_MPPT.c sfun_spssw_contc.c
-S_FUNCTIONS_LIB    = 
-SOLVER             = 
-NUMST              = 4
-TID01EQ            = 0
-NCSTATES           = 16
-MEM_ALLOC          = RT_STATIC
-BUILDARGS          = 
-MEXEXT             = mexw32
-
-MODELREFS          = 
-SHARED_SRC         = 
-SHARED_SRC_DIR     = 
-SHARED_BIN_DIR     = 
-SHARED_LIB         = 
-MEX_OPT_FILE       = -f $(MATLAB_BIN)/win32/mexopts/lccopts.bat
-OPTIMIZATION_FLAGS = -DNDEBUG
-ADDITIONAL_LDFLAGS = 
+MODEL                = single_phase_PVarry_inverter
+MODULES              = 
+PRODUCT              = $(RELATIVE_PATH_TO_ANCHOR)/single_phase_PVarry_inverter.exe
+MAKEFILE             = single_phase_PVarry_inverter.mk
+MATLAB_ROOT          = C:/Program Files/Polyspace/R2019a
+ALT_MATLAB_ROOT      = C:/PROGRA~1/POLYSP~1/R2019a
+MATLAB_BIN           = C:/Program Files/Polyspace/R2019a/bin
+ALT_MATLAB_BIN       = C:/PROGRA~1/POLYSP~1/R2019a/bin
+MASTER_ANCHOR_DIR    = 
+START_DIR            = C:/Users/KWANWA~1/DOCUME~1/GitHub/MPPT/单相逆变/单相逆~1
+S_FUNCTIONS_LIB      = 
+NUMST                = 4
+NCSTATES             = 12
+BUILDARGS            = 
+MULTITASKING         = 0
+INTEGER_CODE         = 0
+MAT_FILE             = 0
+ALLOCATIONFCN        = 0
+ONESTEPFCN           = 0
+TERMFCN              = 1
+MULTI_INSTANCE_CODE  = 0
+CLASSIC_INTERFACE    = 1
+MODELREFS            = 
+GEN_SAMPLE_MAIN      = 0
+SHRLIBTARGET         = 0
+MAKEFILEBUILDER_TGT  = 0
+ENABLE_SLEXEC_SSBRIDGE  = 0
+STANDALONE_SUPPRESS_EXE = 0
+OPTIMIZATION_FLAGS      = 
+ADDITIONAL_LDFLAGS      = 
+DEFINES_CUSTOM          = 
+SYSTEM_LIBS             = -L"C:\Program Files\Polyspace\R2019a\extern\lib\win64\microsoft" libmwipp.lib libut.lib libmwmathutil.lib libmwsl_simtarget_instrumentation.lib libmwsl_simtarget_core.lib libmwsl_fileio.lib libmwsigstream.lib libmwslexec_simlog.lib libmwsl_AsyncioQueue.lib sf_runtime.lib libmwsimulink.lib libmwslexec_simbridge.lib libmwstringutil.lib libmwslio_core.lib libmwslio_clients.lib libmwsl_services.lib
+MODEL_HAS_DYNAMICALLY_LOADED_SFCNS = 0
 
 #--------------------------- Model and reference models -----------------------
 MODELLIB                  = single_phase_PVarry_inverterlib.lib
 MODELREF_LINK_LIBS        = 
-MODELREF_INC_PATH         = 
+MODELREF_LINK_RSPFILE     = single_phase_PVarry_inverter_ref.rsp
 RELATIVE_PATH_TO_ANCHOR   = ../../..
-MODELREF_TARGET_TYPE      = NONE
+FMT_RELATIVE_PATH_TO_ANCHOR   = $(subst /,\,$(RELATIVE_PATH_TO_ANCHOR))
+# NONE: standalone, SIM: modelref sim, RTW: modelref coder target
+MODELREF_TARGET_TYPE       = SIM
+MODELREF_SFCN_SUFFIX       = _msf
+ISPROTECTINGMODEL          = NOTPROTECTING
+PROT_CAPIC_SUFFIX          = _capi.c
+PROT_CAPIO_SUFFIX          = _capi_host.obj
+
 
 #-- In the case when directory name contains space ---
 ifneq ($(MATLAB_ROOT),$(ALT_MATLAB_ROOT))
@@ -114,111 +132,211 @@ ifneq ($(MATLAB_BIN),$(ALT_MATLAB_BIN))
 MATLAB_BIN := $(ALT_MATLAB_BIN)
 endif
 
-#--------------------------- Tool Specifications ------------------------------
+#--------------------------- Tool Specifications -------------------------------
 
-LCC = $(MATLAB_ROOT)\sys\lcc
-include $(MATLAB_ROOT)\rtw\c\tools\lcctools.mak
+LCC = $(MATLAB_ROOT)\sys\lcc64\lcc64
+include $(MATLAB_ROOT)\rtw\c\tools\lcc64tools.mak
 
-MEX = $(MATLAB_BIN)\mex.bat
-CC  = $(MATLAB_BIN)\mex.bat -c
+CMD_FILE             = $(MODEL).rsp
 
 #------------------------------ Include Path -----------------------------------
 
-# Additional includes
+# Additional includes 
 
 ADD_INCLUDES = \
-	-I$(START_DIR)/slprj/accel/single_phase_PVarry_inverter \
 	-I$(START_DIR) \
+	-I$(START_DIR)/slprj/accel/single_phase_PVarry_inverter \
+	-I$(MATLAB_ROOT)/extern/include \
+	-I$(MATLAB_ROOT)/simulink/include \
+	-I$(MATLAB_ROOT)/rtw/c/src \
 	-I$(MATLAB_ROOT)/toolbox/physmod/powersys/facts/facts \
 	-I$(MATLAB_ROOT)/toolbox/physmod/powersys/DR/DR \
 
 
-# see MATLAB_INCLUES and COMPILER_INCLUDES from lcctool.mak
+# see COMPILER_INCLUDES from lcctool.mak
 
-SHARED_INCLUDES =
-ifneq ($(SHARED_SRC_DIR),)
-SHARED_INCLUDES = -I$(SHARED_SRC_DIR) 
-endif
+INCLUDES = -I. -I$(RELATIVE_PATH_TO_ANCHOR) $(ADD_INCLUDES) \
+           $(COMPILER_INCLUDES) $(USER_INCLUDES)
 
-INCLUDES = -I. -I$(RELATIVE_PATH_TO_ANCHOR) $(MATLAB_INCLUDES) $(ADD_INCLUDES) \
-           $(COMPILER_INCLUDES) $(USER_INCLUDES) $(MODELREF_INC_PATH) $(SHARED_INCLUDES)
+#-------------------------------- C Flags --------------------------------------
 
-#------------------------ C and MEX optimization options -----------------------
-MEX_OPTS  =
-OPT_OPTS  = $(DEFAULT_OPT_OPTS)
+# Optimization Options
+OPT_OPTS = $(DEFAULT_OPT_OPTS)
 
-ifneq ($(ADDITIONAL_LDFLAGS),)
-MEX_LDFLAGS = LINKFLAGS="$$LINKFLAGS $(ADDITIONAL_LDFLAGS)"
-else
-MEX_LDFLAGS =
-endif
+# General User Options
+OPTS =
 
+# Compiler options, etc:
 ifneq ($(OPTIMIZATION_FLAGS),)
-MEX_OPT_OPTS = OPTIMFLAGS="$(OPTIMIZATION_FLAGS)"    # passed to 'mex -c'
+CC_OPTS = $(OPTS) $(ANSI_OPTS)  $(OPTIMIZATION_FLAGS)
 else
-MEX_OPT_OPTS = $(OPT_OPTS)    # passed to 'mex -c'
+CC_OPTS = $(OPT_OPTS) $(OPTS) $(ANSI_OPTS) 
 endif
 
-ifeq "$(MEX_OPTS)" "-g"
-MEX_OPT_OPTS =
+CPP_REQ_DEFINES = -DMODEL=$(MODEL) -DNUMST=$(NUMST) -DNCSTATES=$(NCSTATES) \
+		  -DMAT_FILE=$(MAT_FILE) -DINTEGER_CODE=$(INTEGER_CODE) \
+		  -DONESTEPFCN=$(ONESTEPFCN) -DTERMFCN=$(TERMFCN) \
+		  -DHAVESTDIO -DMULTI_INSTANCE_CODE=$(MULTI_INSTANCE_CODE) \
+		  -DCLASSIC_INTERFACE=$(CLASSIC_INTERFACE) \
+		  -DALLOCATIONFCN=$(ALLOCATIONFCN)
+
+ifeq ($(MODELREF_TARGET_TYPE),SIM)
+CPP_REQ_DEFINES += -DMDL_REF_SIM_TGT=1 
+ifneq ($(ENABLE_SLEXEC_SSBRIDGE), 0)
+CPP_REQ_DEFINES += -DENABLE_SLEXEC_SSBRIDGE=$(ENABLE_SLEXEC_SSBRIDGE)
+endif
+else
+CPP_REQ_DEFINES += -DMT=$(MULTITASKING)
 endif
 
-#-------------------------------- Mex Options  ---------------------------------
-MEX_FLAGS = -win32 $(MEX_OPT_OPTS) $(MEX_LDFLAGS) $(MEX_OPTS) $(MEX_OPT_FILE)
+CPP_REQ_DEFINES += -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=$(MODEL_HAS_DYNAMICALLY_LOADED_SFCNS)
 
-#----------------------------- Source Files -----------------------------------
+CFLAGS = $(DEFAULT_CFLAGS) $(CC_OPTS) $(DEFINES_CUSTOM) $(CPP_REQ_DEFINES) $(INCLUDES) -w -noregistrylookup 
+
+# Additional flags required for SIM target
+CFLAGS += -dll -Zp8 -noregistrylookup -DLCC_WIN64
+
+CPP_REQ_DEFINES += -DMODEL_HAS_DYNAMICALLY_LOADED_SFCNS=$(MODEL_HAS_DYNAMICALLY_LOADED_SFCNS)
+
+ifeq ($(OPT_OPTS),$(DEFAULT_OPT_OPTS))
+LDFLAGS = -s -L$(LIB)
+else
+LDFLAGS = -L$(LIB)
+endif
+
+#-------------------------- Additional Libraries ------------------------------
+
+LIBS =
+
+
+LIBS +=  $(S_FUNCTIONS_LIB)
+
+#----------------------------- Source Files ------------------------------------
+ADD_SRCS =
+
+SRCS = $(ADD_SRCS) $(MODULES)
+
 USER_SRCS =
 
 USER_OBJS       = $(USER_SRCS:.c=.obj)
 LOCAL_USER_OBJS = $(notdir $(USER_OBJS))
 
-SRCS      = $(MODEL)_acc.c $(MODULES)
 OBJS      = $(SRCS:.c=.obj) $(USER_OBJS)
-LINK_OBJS = $(SRCS:.c=.obj) $(LOCAL_USER_OBJS)
+PROT_CAPIC  = $(addsuffix $(PROT_CAPIC_SUFFIX), $(MODEL))
+PROT_CAPIO  = $(addsuffix $(PROT_CAPIO_SUFFIX), $(MODEL))
 
-SHARED_OBJS := $(addsuffix .obj, $(basename $(wildcard $(SHARED_SRC))))
-FMT_SHARED_OBJS = $(subst /,\,$(SHARED_OBJS))
+DEF_FILE = $(MODEL).def
 
-#------------------------- Additional Libraries -------------------------------
+#--------------------------------- Rules ---------------------------------------
+BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT)
+ifeq ($(MODELREF_TARGET_TYPE),NONE)
+  ifeq ($(SHRLIBTARGET),1)
+    BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -dll -entry LibMain -o $(PRODUCT)
+    $(PRODUCT) : $(LIBS) lcc_dll_main.obj $(OBJS) $(LIBS) $(MODELREF_LINK_LIBS)
+	$(BIN_SETTING) lcc_dll_main.obj @$(CMD_FILE) $(LOCAL_USER_OBJS) @$(MODELREF_LINK_RSPFILE) $(LIBS) $(MODEL).def
+#--- Comment out the next line to retain .lib and .exp files ---
+	@del $(FMT_RELATIVE_PATH_TO_ANCHOR)\$(MODEL)_win64.lib $(FMT_RELATIVE_PATH_TO_ANCHOR)\$(MODEL)_win64.exp
+	@cmd /C "echo ### Created dynamically linked library: $@"
+  else
+    ifeq ($(MAKEFILEBUILDER_TGT),1)
+      PREBUILT_OBJS       = $(MODULES:.c=.obj)
+      $(PRODUCT) : $(LIBS) $(PREBUILT_OBJS) $(OBJS) $(MODELLIB) $(LIBS) $(MODELREF_LINK_LIBS)
 
-LIBS =
+	@cmd /C "echo ### Created executable: $@"
+    else
+      ifeq ($(STANDALONE_SUPPRESS_EXE), 1)
+        .PHONY: $(PRODUCT)
+        $(PRODUCT) : $(LIBS) $(OBJS) $(LIBS) $(MODELREF_LINK_LIBS)
+	@cmd /C "echo ### Created object modules $@"
+      else
+        $(PRODUCT) : $(LIBS) $(OBJS) $(LIBS) $(MODELREF_LINK_LIBS)
+	$(BIN_SETTING) @$(CMD_FILE) $(LOCAL_USER_OBJS) @$(MODELREF_LINK_RSPFILE) $(LIBS) $(SYSTEM_LIBS)
+	@cmd /C "echo ### Created executable: $@"
+      endif
+    endif
+  endif
+else
+ ifeq ($(MODELREF_TARGET_TYPE),SIM)
+  ifeq ($(ISPROTECTINGMODEL),PROTECTING)
+  all : $(PRODUCT) $(PROT_CAPIO)
+  endif
+  $(PRODUCT) : $(LIBS) $(OBJS) $(LIBS)
 
 
 
-LIBUT = $(MATLAB_ROOT)\extern\lib\win32\lcc\libut.lib
-LIBMWMATHUTIL = $(MATLAB_ROOT)\extern\lib\win32\lcc\libmwmathutil.lib
-LIBMWSL_FILEIO = $(MATLAB_ROOT)\extern\lib\win32\lcc\libmwsl_fileio.lib
-LIBMWIPP = $(MATLAB_ROOT)\lib\win32\libippmwipt.lib
-LIBS += $(LIBUT) $(LIBMWMATHUTIL) $(LIBMWSL_FILEIO) $(LIBMWIPP)
+  ifeq ($(ISPROTECTINGMODEL),PROTECTING)
+  $(PROT_CAPIO) : $(PROT_CAPIC)
+	$(CC) -c $(CFLAGS) -DHOST_CAPI_BUILD $(PROT_CAPIC) /Fo$(PROT_CAPIO)
+  endif
+ else
+  $(PRODUCT) : $(LIBS) $(OBJS)
 
-PROGRAM = ../$(MODEL)_acc.$(MEXEXT)
 
-#--------------------------------- Rules --------------------------------------
 
-$(PROGRAM) : $(OBJS) $(LIBS) $(SHARED_LIB)
-	@echo ### Linking ...
-	$(MEX) $(MEX_FLAGS) -outdir $(RELATIVE_PATH_TO_ANCHOR) $(LINK_OBJS) $(S_FUNCTIONS_LIB) $(SHARED_LIB) $(LIBS) 
-	@echo ### Created mex file: $(MODEL)_acc.$(MEXEXT)
+	@cmd /C "echo ### Created library: $@"
+ endif
+endif
 
 %.obj : %.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+%.obj : %.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
 %.obj : $(RELATIVE_PATH_TO_ANCHOR)/%.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+%.obj : $(RELATIVE_PATH_TO_ANCHOR)/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+# compile rt_main.c or rt_malloc_main.c from rtw/c/src/common if one was not generated
+ifeq ($(GEN_SAMPLE_MAIN),0)
+%.obj : $(MATLAB_ROOT)/rtw/c/src/common/%.c
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+endif
+
+# compile lcc_dll_main.c
+ifeq ($(SHRLIBTARGET),1)
+lcc_dll_main.obj : $(MATLAB_ROOT)/rtw/c/ert/lcc_dll_main.c
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+endif
+
+%.obj : $(MATLAB_ROOT)/rtw/c/ert/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
 %.obj : $(MATLAB_ROOT)/rtw/c/src/%.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
-%.obj : $(MATLAB_ROOT)/simulink/src/%.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+%.obj : $(MATLAB_ROOT)/rtw/c/src/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
 %.obj : $(MATLAB_ROOT)/toolbox/physmod/powersys/powersys/%.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
+%.obj : $(START_DIR)/slprj/accel/single_phase_PVarry_inverter/%.c
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
+%.obj : $(MATLAB_ROOT)/rtw/c/src/%.c
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
 
 %.obj : $(MATLAB_ROOT)/simulink/src/%.c
-	$(CC) $(MEX_FLAGS) $(INCLUDES) $<
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+
+
+%.obj : $(MATLAB_ROOT)/toolbox/physmod/powersys/powersys/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+%.obj : $(START_DIR)/slprj/accel/single_phase_PVarry_inverter/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+%.obj : $(MATLAB_ROOT)/rtw/c/src/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+%.obj : $(MATLAB_ROOT)/simulink/src/%.C
+	$(CC) -c -Fo$(@F) $(CFLAGS) $<
+
+
 
 # Libraries:
 
@@ -226,20 +344,6 @@ $(PROGRAM) : $(OBJS) $(LIBS) $(SHARED_LIB)
 
 
 
-clean :
-	@echo ### Deleting the objects and $(PROGRAM)
-	@del $(OBJS) ..\$(MODEL)_acc.$(MEXEXT) $(wildcard *.obj) $(wildcard *.lib)
-
-#----------------------------- Dependencies -------------------------------
-
-$(OBJS) : $(MAKEFILE) rtw_proj.tmw
-
-$(SHARED_OBJS) : $(SHARED_BIN_DIR)/%.obj : $(SHARED_SRC_DIR)/%.c 
-	$(CC) -outdir $(SHARED_BIN_DIR) $(MEX_FLAGS) $(INCLUDES) $<
-
-$(SHARED_LIB) : $(SHARED_OBJS)
-	@echo ### Creating $@ 
-	$(LIBCMD) /out:$@ $(FMT_SHARED_OBJS)
-	@echo ### $@ Created   
+#----------------------------- Dependencies ------------------------------------
 
 
